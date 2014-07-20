@@ -53,7 +53,10 @@
                 NSLog(@"リクエストERROR %@", jsonParseError);
                 return;
             }
-            NSLog(@"ステータス取得！ %@\n総数 %d", statuses, [statuses count]);
+            // 更新したstatusesを元にself.tableViewを最新にする
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+            });
         }];
     }];
     
@@ -72,6 +75,36 @@
     }
     TWTweetComposeViewController *myTweetController = [[TWTweetComposeViewController alloc] init];
     [self presentModalViewController: myTweetController animated: YES];
+}
+
+- (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
+    NSLog(@"numberOfSectionsInTableView");
+    return 1;
+}
+- (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [statuses count];
+}
+- (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *cellIdentifier = @"cell";
+    UITableViewCell *myCell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    
+    if (myCell == nil) {
+        myCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier: cellIdentifier];
+        myCell.textLabel.font = [UIFont systemFontOfSize: 11.0];
+    }
+    NSDictionary *status = [statuses objectAtIndex: indexPath.row];
+    NSString *text = [status objectForKey: @"text"];
+    myCell.textLabel.text = text;
+    return myCell;
+}
+
+- (id)initWithStyle:(UITableViewStyle)style
+{
+    self = [super initWithStyle:style];
+    if (self) {
+        // Custom initialization
+    }
+    return self;
 }
 
 @end
