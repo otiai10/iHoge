@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface IHogeViewController : UIViewController
+@interface IHogeViewController : UITableViewController {
+    NSArray *statuses;
+}
 
 @end
